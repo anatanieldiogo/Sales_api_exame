@@ -1,74 +1,61 @@
-## Convicti test
+## Exame de programação - Anataniel Diogo
 
-Está api foi desenvolvida utilisando o framework [Laravel](https://laravel.com/). Ela usa o pacote Laravel Sail que ajuda muito na gestão dos Containers Docker. Estamos a usar o Banco de dados Mysql. A aplicação tem 2 Containers:
-
-- `sail-8.1/app`
-- `mysql/mysql-serverÇ8.0`
-
----
-
- - ### [Como rodar](#como-rodar-o-projecto)
+Está api foi desenvolvida utilisando o framework [Laravel](https://laravel.com/) v10. 
 
 
 ## Como rodar o projecto
 
-Para rodar o Projecto voçe precisa ter o Docker instalado na sua máquina e bem configurado:
+Para rodar o Projecto você precisa ter o Laravel instalado na sua máquina e bem configurado:
 
-- [Ubunto](https://www.youtube.com/watch?v=q4ZK6IJCS6Q).
-- [Mac](https://www.youtube.com/watch?v=ktNYPv6kfVk).
-- [Windows](https://www.youtube.com/watch?v=rEXd7xpts5k).
+- [Ubunto](https://www.youtube.com/watch?v=OSadDCC-SOo).
+- [Mac](https://www.youtube.com/watch?v=DtUY8J2T-mc).
+- [Windows](https://www.youtube.com/watch?v=bV26n0fmqoE).
 
-Após a configuração do docker, abra o seu terminal e faça um clone do projecto:
+Após a configuração do Laravel, abra o seu terminal e faça o clone do projecto:
 
- $ git clone https://github.com/anatanieldiogo/convicti_test
+      $ git clone https://github.com/anatanieldiogo/Sales_api_exame
 
- Depois, acessar o diretório do projecto e executar o container do docker.
+ Depois, acessar o diretório do projecto(Sales_api_exame) e seguir os passos:
 
- $  docker-compose -f docker-compose.yml up
 
- Agora verifique se os containers levantaram:
+Instalar as dependências
     
-    $ docker ps
-
-Se notar no terminal algo como:
-
-$ 878bd1a2d2c7   sail-8.1/app
-
-e
-
-$ eea717095595   mysql/mysql-server:8.0
-
-podemos avançar para o proximo passo.
-
-Uma vez que os containers estão a rodar vamos entrar dentro do container `sail-8.1/app`, depois instale as dependencias do projecto e execute o seguinte:
-
-$ docker exec -it [Conatiner_ID] bash 
-
-//Instalar as dependencias
     $ composer install
 
+Ou caso o comando acima apresentar um erro sobre a atualização das dependências:
+    
+    $ composer update
+
 Copiar o arquivo .env
+
     $ cp .env.example .env
 
-//Gerar a chave da aplicação
+Gerar a chave da aplicação
+
     $ php artisan key:generate
 
-//Executar os containers
-    $ ./vendor/bin/sail up 
+Configurar o banco de dados no arquivo .env copiado acima:
 
-Feito isso podemos rodar as migrações.
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE= banco_de_dados
+    DB_USERNAME= nome_de_usuario_do_mysql
+    DB_PASSWORD= caso_tenha_colocar_a_palavra_passe
 
-    //Entrar no modo Root
-    $ ./vendor/bin/sail root-shell
+Feito isso podemos rodar o projeto:
 
-    //Rodar as migrate
+    $ php artisan serve
+
+Rodar as migrations para criar as tabelas no banco de dados:
+
     $ php artisan migrate
 
 ## Seeders
 
 Todos os usuários, diretorias, unidades, vendedores e algumas vendas serão inseridas automaticamente utilizando seeders, e para tal devemos rodar o comando:
 
-$ php artisan db:seed
+    $ php artisan db:seed
 
 Como rodar uma [Seeder](https://laravel.com/docs/9.x/seeding#running-seeders)
 
@@ -79,7 +66,6 @@ Para testar o funcionamento correto dos endpoints aconselho a utilização do [P
 
 Os endpoints são protegidos por um token(sanctum) gerado após o login, e o mesmo é do tipo `Bearer Token` e, deve ser usado nos seguintes endpoints:
 
-- /signin
 - /sales
 - /store-sale
 - /search
@@ -87,25 +73,33 @@ Os endpoints são protegidos por um token(sanctum) gerado após o login, e o mes
 
 configurar o token no Postman [Bearer Token](https://www.youtube.com/watch?v=PPi9teNKRHY)
 
-//signin - requisição do tipo post
 
-$ http://localhost/api/signin
+## Tipos de requisições:
 
-Os emails de login são os presentes na folha do exel e a senha: 123
+- http://localhost/api/signin `POST`
+- http://localhost/api/sales `GET`
+- http://localhost/api/store-sale `POST`
+- http://localhost/api/search `POST`
+- http://localhost/api/signout `GET`
 
-Cada usuário tem o seu nível de acesso conforme esplicado no documento.
+Os usuários para o login encontram-se no diretóro "database/seedrs/userSeeder.php" e a senha: 123 para todos
 
-//sales - requisição do tipo get
+Cada usuário tem o seu nível de acesso:
 
-$ http://localhost/api/sales
+- Diretor geral
+- Diretores
+- Gerentes
+- Vendedores
 
-Este endpoint retorna as vendas de acordo ao nível de acesso do usuário logado
+## Endpoints - descrição
 
-//store-sale - requisição do tipo post
+`sales` Este endpoint retorna as vendas de acordo ao nível de acesso do usuário logado:
 
-$ http://localhost/api/store-sale
+    $ http://localhost/api/sales
 
-Este endpoint permite o registro de uma venda com os seguintes campos:
+`store-sale` Este endpoint permite o registro de uma venda com os seguintes campos:
+
+    $ http://localhost/api/store-sale
 
 - valor_venda
 - diretoria_id
@@ -113,12 +107,9 @@ Este endpoint permite o registro de uma venda com os seguintes campos:
 - local ex: ["-30.048750057541955", "-51.228587422990806"]
 - status(inteiro), obs: o status servirá para o dev mobile definir se esta venda se encontra sincronizada com a nuvem.
 
-
-//search - requisição do tipo post
-
-$ http://localhost/api/search
-
-Este endpoint permite a filtragem das vendas permitindo pesquisa por:
+`search` Este endpoint permite a filtragem das vendas permitindo pesquisa por:
+    
+    $ http://localhost/api/search
 
 - diretoria_id
 - unidade_id
@@ -126,10 +117,9 @@ Este endpoint permite a filtragem das vendas permitindo pesquisa por:
 - data_inicio
 - data_fim
 
-//signout - requisição do tipo get
+`signout` Este endpoint termina a sessão do sistema:
 
-$ http://localhost/api/signout
+    $ http://localhost/api/signout
 
-Este endpoint termina a sessão do sistema
 
 **NOTA:** Se por algum motivo não for possível executar o sistema porfavor entrar em contato!
